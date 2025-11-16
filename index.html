@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kasımpatılar, Kalpler, Pati İzleri ve Salep</title>
+    <meta name="theme-color" content="#ff6fa1" />
+    <style>
+      :root{
+        /* Temel renkler */
+        --text:#fff8fc;
+        --accent:#ff98c2;
+        --accent-strong:#ff5f8f;
+
+        /* Arka plan: koyu mor taban + aurora gökkuşağı */
+        --bg: radial-gradient(circle at top, #432355, #1a0f22 55%, #0d0811);
+      }
+
+      *{box-sizing:border-box;margin:0;padding:0}
+      html,body{height:100%}
+      body{
+        font-family: "Cormorant Garamond","Didot","Playfair Display",serif;
+        min-height:100vh;
+        background:var(--bg);
+        color:var(--text);
+        overflow-x:hidden;
+      }
+
+      /* Yıldız taneleri */
+      body::before{
+        content:"";
+        position:fixed; inset:0;
+        background:url("data:image/svg+xml,%3Csvg width='160' height='160' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='80' cy='80' r='1.5' fill='%23ffffff11'/%3E%3C/svg%3E") repeat;
+        opacity:.8; pointer-events:none; mix-blend-mode:screen; z-index:0;
+      }
+
+      /* Aurora / gökkuşağı parıltısı */
+      .aurora{
+        position:fixed; inset:-25%;
+        background:
+          radial-gradient(40% 60% at 20% 20%, #ff8bd3 0%, transparent 60%),
+          radial-gradient(45% 60% at 80% 30%, #8bf9ff 0%, transparent 60%),
+          radial-gradient(40% 60% at 30% 80%, #fffd95 0%, transparent 60%),
+          radial-gradient(40% 60% at 70% 70%, #b18bff 0%, transparent 60%);
+        filter:blur(70px) saturate(1.1);
+        opacity:.28; mix-blend-mode:screen; pointer-events:none;
+        animation:aurora 36s linear infinite;
+        z-index:0;
+      }
+      @keyframes aurora{
+        from{transform:rotate(0deg) scale(1.05)}
+        to{transform:rotate(360deg) scale(1.05)}
+      }
+
+      header.hero{
+        text-align:center;
+        padding:12vh 8vw 6vh;
+        position:relative;
+        z-index:3;
+      }
+      .hero h1{
+        font-size:clamp(2.8rem,6vw,4.8rem);
+        letter-spacing:.08em; text-transform:uppercase;
+        margin-bottom:1rem;
+      }
+      .hero .subtitle{
+        font-size:clamp(1.1rem,2.6vw,1.6rem);
+        max-width:860px; margin:0 auto 2rem; line-height:1.7;
+      }
+      .badges{
+        display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap;
+        margin-bottom:1.6rem; opacity:.95;
+      }
+      .badge{
+        padding:.35rem .75rem; border-radius:999px;
+        font-size:.95rem; letter-spacing:.04em;
+        background:linear-gradient(120deg,#ff91bf,#fbc1ff 60%,#fff0b8);
+        color:#5c0a26; border:1px solid #ffffff66;
+        box-shadow:0 6px 18px rgba(255,145,191,.35);
+      }
+
+      .cta-bar{
+        display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;
+        margin-top:1rem;
+      }
+      .cta{
+        display:inline-block;
+        padding:.9rem 2.2rem; border-radius:999px;
+        border:1px solid rgba(255,255,255,.55);
+        background:linear-gradient(120deg,#ff91bf,#fbc1ff 60%,#fff0b8);
+        color:#5c0a26; font-weight:700; letter-spacing:.06em;
+        text-transform:uppercase; text-decoration:none;
+        box-shadow:0 10px 30px rgba(255,145,191,.45);
+        transition:transform 200ms ease, box-shadow 200ms ease;
+      }
+      .cta:hover{ transform:translateY(-4px) scale(1.02); box-shadow:0 12px 40px rgba(255,145,191,.6) }
+
+      .cta.secondary{
+        background:linear-gradient(120deg,#a1fff6,#d6b1ff 60%,#fffd95);
+        box-shadow:0 10px 30px rgba(161,255,246,.28); color:#102b2b;
+      }
+
+      main{
+        display:grid; gap:2rem;
+        grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+        padding:0 8vw 8vh;
+        position:relative; z-index:3;
+      }
+      .card{
+        background:rgba(15,6,22,.72);
+        border:1px solid rgba(255,255,255,.12);
+        border-radius:32px; padding:2rem;
+        backdrop-filter:blur(16px);
+        box-shadow:0 0 40px rgba(61,9,84,.45);
+      }
+      .card h2{
+        font-size:1.6rem; margin-bottom:1rem; color:var(--accent);
+      }
+      .card p{ line-height:1.8; font-size:1.05rem }
+      .card .hearts{ font-size:1.25rem; letter-spacing:.2em }
+
+      footer{
+        text-align:center; padding-bottom:5vh;
+        font-size:1rem; letter-spacing:.1em; opacity:.85; z-index:3; position:relative;
+      }
+
+      /* Pati deseni (çok hafif) */
+      .paws{
+        position:fixed; inset:0; pointer-events:none; z-index:0;
+        background:
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='%23ffffff14'%3E%3Ccircle cx='45' cy='28' r='8'/%3E%3Ccircle cx='70' cy='24' r='7'/%3E%3Ccircle cx='92' cy='30' r='7'/%3E%3Ccircle cx='112' cy='28' r='8'/%3E%3Cellipse cx='78' cy='68' rx='22' ry='18'/%3E%3C/g%3E%3C/svg%3E") repeat;
+        mix-blend-mode:soft-light;
+        opacity:.4;
+      }
+
+      /* Yapraklar (orijinal) */
+      .petal-field{
+        position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:1;
+      }
+      .petal{
+        position:absolute; width:28px; height:60px;
+        background:radial-gradient(circle at 30% 20%, #fff5f9, #ffb7d6 65%);
+        border-radius:60% 60% 40% 40%;
+        opacity:.7; left:var(--left);
+        animation:fall var(--duration) ease-in var(--delay) infinite;
+        filter:blur(.5px); transform-origin:center top; will-change:transform,opacity;
+      }
+      .petal::after{
+        content:""; position:absolute; width:12px; height:36px;
+        background:rgba(255,255,255,.6); border-radius:999px; left:8px; top:8px; filter:blur(1px);
+      }
+      @keyframes fall{
+        0%{ transform:translateY(-10vh) rotate(-8deg); opacity:0 }
+        20%{ opacity:.85 }
+        80%{ transform:translateY(110vh) rotate(24deg); opacity:.85 }
+        100%{ transform:translateY(130vh) rotate(32deg); opacity:0 }
+      }
+
+      /* Kasımpatı bahçesi (orijinal) */
+      .garden{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:2 }
+      .flower{
+        position:absolute; width:var(--size); height:var(--size);
+        left:var(--x); top:var(--y);
+        animation:sway calc(16s + var(--size) / 40) ease-in-out infinite;
+        animation-delay:var(--delay);
+        filter:drop-shadow(0 0 18px rgba(255,165,200,.35));
+        will-change:transform;
+      }
+      .flower::before,.flower::after{
+        content:""; position:absolute; inset:0; border-radius:50%;
+        background:repeating-conic-gradient(from 0deg,
+          hsla(var(--hue),70%,75%,.95) 0deg 18deg,
+          hsla(var(--hue),70%,45%,.3) 18deg 36deg),
+          radial-gradient(circle at 50% 35%, rgba(255,255,255,.8), transparent 55%);
+        -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 62%, rgba(0,0,0,0) 100%);
+                mask-image: radial-gradient(circle, rgba(0,0,0,1) 62%, rgba(0,0,0,0) 100%);
+      }
+      .flower::after{
+        inset:12%;
+        background:repeating-conic-gradient(from 10deg,
+          hsla(var(--hue),80%,85%,.9) 0deg 12deg,
+          hsla(var(--hue),40%,50%,.4) 12deg 24deg),
+          radial-gradient(circle at 50% 45%, rgba(255,255,255,.7), transparent 55%);
+        filter:blur(1px);
+      }
+      .flower span{
+        position:absolute; inset:38%; border-radius:50%;
+        background:radial-gradient(circle,#f9f4d1,#e4b441 65%,#a66b18);
+        box-shadow:0 0 15px rgba(251,242,186,.7);
+      }
+      @keyframes sway{
+        0%,100%{ transform:translate3d(0,-3%,0) rotate(-2deg) scale(1)}
+        50%{ transform:translate3d(0,3%,0) rotate(4deg) scale(1.06)}
+      }
+
+      /* ❤️ Kalp gökyüzü */
+      .love-sky{ position:fixed; inset:0; pointer-events:none; z-index:1 }
+      .heart{
+        position:absolute; bottom:-10vh; left:var(--left);
+        font-size:var(--size,26px); filter:drop-shadow(0 0 10px rgba(255,120,160,.55));
+        animation:rise var(--duration,14s) ease-in var(--delay,0s) infinite;
+        will-change:transform,opacity;
+      }
+      @keyframes rise{
+        0%{ transform:translateY(0) scale(.85) rotate(-10deg); opacity:0 }
+        10%{ opacity:.95 }
+        60%{ transform:translateY(-70vh) scale(1.1) rotate(8deg) }
+        100%{ transform:translateY(-120vh) scale(1.15) rotate(18deg); opacity:0 }
+      }
+
+      /* ☕️ Salep fincanı çizimi */
+      .salep-figure{ display:grid; place-items:center; gap:1rem; margin:1rem 0 0.5rem }
+      .cup{
+        position:relative; width:200px; height:120px; border-radius:0 0 18px 18px;
+        background:linear-gradient(#f7e8dd,#f1d7c3);
+        box-shadow:inset 0 6px 10px rgba(0,0,0,.06), 0 20px 40px rgba(0,0,0,.25);
+      }
+      .cup::before{
+        /* tabak */
+        content:""; position:absolute; left:50%; bottom:-18px; transform:translateX(-50%);
+        width:280px; height:34px; border-radius:999px;
+        background:radial-gradient(circle at 50% 40%, #ffffffaa, #e9d7c6 60%, #d7c1af);
+        filter:blur(.2px);
+      }
+      .cup::after{
+        /* kulp */
+        content:""; position:absolute; right:-38px; top:30px; width:60px; height:50px;
+        border:10px solid #f1d7c3; border-left:12px solid transparent; border-radius:50%;
+        box-shadow:inset 0 0 0 2px #f3e1d3;
+      }
+      .foam{
+        position:absolute; inset:10px 12px auto 12px; height:46px; border-radius:14px 14px 10px 10px;
+        background:
+          radial-gradient(circle at 26% 40%, #fff7ee, transparent 50%),
+          radial-gradient(circle at 64% 50%, #fff2e6, transparent 55%),
+          #ffe9d6;
+        border:1px solid #f5dac6;
+        box-shadow:inset 0 0 0 3px #ffeedd, inset 0 10px 16px rgba(160,120,80,.2);
+      }
+      .foam::after{
+        /* tarçın */
+        content:""; position:absolute; inset:6px; border-radius:12px;
+        background:
+          radial-gradient(#8a4b2a 2px, transparent 3px) 0 0/14px 14px,
+          radial-gradient(#8a4b2a 1.5px, transparent 3px) 7px 6px/16px 16px;
+        opacity:.18; mix-blend-mode:multiply;
+      }
+      .latte-heart{
+        position:absolute; left:50%; top:30px; transform:translateX(-50%);
+        font-size:28px; opacity:.9; text-shadow:0 2px 6px rgba(255,120,160,.45);
+      }
+      .steam{
+        position:absolute; left:50%; width:8px; height:80px; top:-50px;
+        background:radial-gradient(circle at 50% 20%, #ffffffcc, transparent 60%);
+        filter:blur(2px); border-radius:999px; opacity:.65;
+        animation:steam 4.6s ease-in-out infinite;
+      }
+      .steam.s1{ transform:translateX(-36px); animation-delay:-.6s }
+      .steam.s2{ transform:translateX(-4px);  animation-delay:-1.2s }
+      .steam.s3{ transform:translateX(28px);  animation-delay:-.2s }
+      @keyframes steam{
+        0%{ transform:translateY(10px) translateX(var(--x,0)) scale(.9); opacity:.0 }
+        15%{ opacity:.7 }
+        60%{ transform:translateY(-50px) translateX(calc(var(--x,0) + 6px)) scale(1) }
+        100%{ transform:translateY(-80px) translateX(calc(var(--x,0) + 10px)) scale(1.05); opacity:0 }
+      }
+
+      /* Renk dansı modu (butonla aç/kapa) */
+      body.vivid{
+        filter:saturate(1.2);
+      }
+      body.vivid .aurora{ opacity:.36 }
+      body.vivid .card{ box-shadow:0 0 50px rgba(255,120,200,.55) }
+      body.vivid .cta{ transform:translateY(-1px) }
+
+      /* Erişilebilirlik – hareketi azalt */
+      @media (prefers-reduced-motion:reduce){
+        .aurora,.petal,.flower,.heart,.steam{ animation:none !important }
+      }
+
+      @media (max-width:700px){
+        main{ padding:0 1.5rem 4rem }
+        header.hero{ padding:10vh 1.5rem 4vh }
+        .cup{ transform:scale(.95) }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Gösterişli fakat hafif katmanlar -->
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="paws" aria-hidden="true"></div>
+
+    <!-- Kalp yağmuru -->
+    <div class="love-sky" aria-hidden="true">
+      <span class="heart" style="--left:6%;  --size:24px; --duration:16s; --delay:0s;">💖</span>
+      <span class="heart" style="--left:14%; --size:30px; --duration:18s; --delay:2s;">💘</span>
+      <span class="heart" style="--left:26%; --size:22px; --duration:14s; --delay:1.2s;">💞</span>
+      <span class="heart" style="--left:36%; --size:28px; --duration:17s; --delay:3.4s;">❤️</span>
+      <span class="heart" style="--left:46%; --size:24px; --duration:15s; --delay:1.8s;">💗</span>
+      <span class="heart" style="--left:58%; --size:26px; --duration:19s; --delay:0.6s;">💓</span>
+      <span class="heart" style="--left:68%; --size:32px; --duration:18s; --delay:2.8s;">💘</span>
+      <span class="heart" style="--left:78%; --size:24px; --duration:16s; --delay:1s;">💖</span>
+      <span class="heart" style="--left:88%; --size:30px; --duration:21s; --delay:3.2s;">❤️</span>
+      <span class="heart" style="--left:20%; --size:20px; --duration:20s; --delay:4s;">💝</span>
+      <span class="heart" style="--left:54%; --size:22px; --duration:22s; --delay:5s;">💞</span>
+    </div>
+
+    <!-- Kasımpatı yaprakları -->
+    <div class="petal-field" aria-hidden="true">
+      <span class="petal" style="--left:8%; --duration:14s; --delay:0s;"></span>
+      <span class="petal" style="--left:18%; --duration:17s; --delay:3s;"></span>
+      <span class="petal" style="--left:32%; --duration:16s; --delay:1.5s;"></span>
+      <span class="petal" style="--left:45%; --duration:18s; --delay:2.3s;"></span>
+      <span class="petal" style="--left:55%; --duration:15s; --delay:4s;"></span>
+      <span class="petal" style="--left:66%; --duration:19s; --delay:1s;"></span>
+      <span class="petal" style="--left:78%; --duration:16s; --delay:2.7s;"></span>
+      <span class="petal" style="--left:88%; --duration:21s; --delay:0.6s;"></span>
+    </div>
+
+    <!-- Kasımpatı bahçesi -->
+    <div class="garden" aria-hidden="true">
+      <div class="flower" style="--size:220px; --x:8%;  --y:70%; --delay:0s;  --hue:320;"><span></span></div>
+      <div class="flower" style="--size:180px; --x:72%; --y:65%; --delay:-6s; --hue:330;"><span></span></div>
+      <div class="flower" style="--size:140px; --x:48%; --y:80%; --delay:-2s; --hue:310;"><span></span></div>
+      <div class="flower" style="--size:200px; --x:25%; --y:60%; --delay:-8s; --hue:345;"><span></span></div>
+      <div class="flower" style="--size:160px; --x:58%; --y:58%; --delay:-4s; --hue:300;"><span></span></div>
+    </div>
+
+    <header class="hero">
+      <h1>Kasımpatı Masalım 💖🐾</h1>
+      <p class="subtitle">
+        Rüzgârın fısıldadığı bu gizli bahçede her kasımpatı, kalbimin sana
+        söylemek istediği şarkının bir notasına dönüşüyor. Pati izlerinin
+        tatlılığı, salebin sıcaklığı ve gökkuşağının tüm renkleriyle yanındayım. ❤️
+      </p>
+      <div class="badges" aria-hidden="true">
+        <span class="badge">🐾 Kedi Dostu</span>
+        <span class="badge">☕️ Salep Aşıklarına</span>
+        <span class="badge">🌈 Renklerin Hepsi Güzel</span>
+        <span class="badge">💘 Kalple Dokunan Sözler</span>
+      </div>
+      <div class="cta-bar">
+        <a class="cta" href="#mektup">Kalbime Dokun 💝</a>
+        <button class="cta secondary" id="toggleColors" type="button" aria-pressed="false">Renkleri Dans Ettir 🌈</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card" id="mektup">
+        <h2>Gecenin Kucakladığı Sözler ❤️</h2>
+        <p>
+          Şehrin ışıkları sönse de hayalimde parlayan tek şey sensin. Kasımpatı
+          tarlalarının mor, pembe ve kehribar dokunuşları gibi hayranlığım katman
+          katman ışıldıyor. Her sabah uyandığımda birlikte yazacağımız hikâyeyi
+          düşünmek kalbime bir gülüş konduruyor. <span class="hearts">💖 💘 💞</span>
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Minik Patilerle Mutluluk 🐾</h2>
+        <p>
+          Kedilerin mırıltısı gibi yanında sakin, yumuşak ve güvenli olmak istiyorum.
+          Birlikte pencereden gökyüzünü izlerken, minik patilerin ritmiyle
+          kalbimin sana attığını duyuyorum. Her pati izi, sana attığım bir adım;
+          her mırk, içimde büyüyen bir “iyi ki”... <span class="hearts">❤️ 🐾 ❤️</span>
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Salep Molamız ☕️💗</h2>
+        <div class="salep-figure" role="img" aria-label="Üstünden buhar yükselen salep fincanı ve kalp şekli">
+          <div class="cup">
+            <div class="foam"></div>
+            <div class="latte-heart">🤍</div>
+            <div class="steam s1" style="--x:-8px"></div>
+            <div class="steam s2" style="--x:0px"></div>
+            <div class="steam s3" style="--x:8px"></div>
+          </div>
+        </div>
+        <p>
+          Bir bardak sıcak salep, tarçın kokusu ve sen... Dudaklarında beliren her
+          gülümseme günümü tatlandırıyor. Fincan kenarına kondurduğun bir kalp,
+          tüm yorgunluğumu alıyor. <span class="hearts">💓 ☕️ 💞</span>
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Renklerin Şarkısı 🌈</h2>
+        <p>
+          “Hepsini seviyorum” dediğin renkler gibi; yanında her ton güzel, her gölge
+          anlamlı. Mor bir akşam, pembe bir sabah, altın bir gün batımı... Ne renk
+          istersen, o renge boyarım yolumuzu. <span class="hearts">💜 💛 💚 💙 ❤️</span>
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Kalpten Verilen Sözler 💞</h2>
+        <p>
+          Seni gülümseten sesleri ezberlemeye, zihnini hafifleten rüzgâr olmaya
+          niyetliyim. Yolun nereye dönerse dönsün, kalbimin en özenli köşesinde
+          sana ardı ardına açan kasımpatılar hazırlıyorum. <span class="hearts">💖 💘 💝</span>
+        </p>
+      </section>
+    </main>
+
+    <footer>Bu sayfa senin gülüşüne dokunmak için var. ❤️</footer>
+
+    <script>
+      // Renkleri Dans Ettir düğmesi
+      const btn = document.getElementById('toggleColors');
+      btn?.addEventListener('click', () => {
+        const on = document.body.classList.toggle('vivid');
+        btn.setAttribute('aria-pressed', String(on));
+      });
+
+      // Küçük bir kalp sürprizi: dokunduğun/ tıkladığın yere kısa ömürlü kalpleri bırakır
+      // (Hafif tutuldu; yoğun tıklarda bile performansı bozmaz.)
+      const spawnHeart = (x, y) => {
+        const h = document.createElement('span');
+        h.textContent = ['💖','💘','❤️','💗','💓','💞'][Math.floor(Math.random()*6)];
+        h.style.position = 'fixed';
+        h.style.left = x + 'px';
+        h.style.top = y + 'px';
+        h.style.fontSize = (18 + Math.random()*18) + 'px';
+        h.style.transform = 'translate(-50%, -50%)';
+        h.style.pointerEvents = 'none';
+        h.style.filter = 'drop-shadow(0 0 8px rgba(255,120,160,.6))';
+        h.style.transition = 'transform 900ms ease, opacity 900ms ease';
+        h.style.zIndex = 5;
+        document.body.appendChild(h);
+        requestAnimationFrame(() => {
+          h.style.transform = 'translate(-50%, -120%) scale(1.4) rotate(12deg)';
+          h.style.opacity = '0';
+        });
+        setTimeout(() => h.remove(), 950);
+      };
+      addEventListener('click', (e) => {
+        // Erişilebilirlik: hareketi azaltı tercihinde sürprizi göstermeyelim
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (!mq.matches) spawnHeart(e.clientX, e.clientY);
+      }, { passive: true });
+    </script>
+  </body>
+</html>
